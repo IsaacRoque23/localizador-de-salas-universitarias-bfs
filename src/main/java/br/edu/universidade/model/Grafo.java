@@ -16,7 +16,6 @@ public class Grafo {
         }
     }
 
-    /** Cria uma conexão nos dois sentidos entre dois locais. */
     public void adicionarConexao(Local a, Local b) {
         if (!adjacencias.get(a).contains(b)) {
             adjacencias.get(a).add(b);
