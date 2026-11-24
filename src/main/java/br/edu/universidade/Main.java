@@ -2,43 +2,123 @@ package br.edu.universidade;
 
 import br.edu.universidade.model.Grafo;
 import br.edu.universidade.model.Local;
+import br.edu.universidade.model.MapaUniversidade;
 import br.edu.universidade.service.BuscaBFS;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class Main {
 
     public static void main(String[] args) {
-        Grafo universidade = new Grafo();
-        universidade.adicionarConexao(Local.BIBLIOTECA, Local.SECRETARIA);
-        universidade.adicionarConexao(Local.BIBLIOTECA, Local.LABORATORIO);
-        universidade.adicionarConexao(Local.SECRETARIA, Local.CANTINA);
-        universidade.adicionarConexao(Local.LABORATORIO, Local.SALA_DE_AULA);
-        universidade.adicionarConexao(Local.CANTINA, Local.AUDITORIO);
-        universidade.adicionarConexao(Local.SALA_DE_AULA, Local.AUDITORIO);
 
+        Scanner scanner = new Scanner(System.in);
+
+        // Carregando o mapa da universidade
+        Grafo universidade = MapaUniversidade.criarMapa();
+
+        // Criando o objeto responsável pela busca BFS
         BuscaBFS busca = new BuscaBFS(universidade);
 
-        Local origem = Local.BIBLIOTECA;
-        Local destino = Local.AUDITORIO;
+        int opcao;
 
-        Optional<List<Local>> resultado = busca.buscarCaminho(origem, destino);
+        do {
 
-        if (resultado.isPresent()) {
-            List<Local> caminho = resultado.get();
+            System.out.println("\n====================================");
+            System.out.println("    SISTEMA DE ROTAS UNIVERSITARIAS");
+            System.out.println("====================================");
+            System.out.println("1 - Buscar caminho");
+            System.out.println("2 - Listar locais");
+            System.out.println("0 - Sair");
+            System.out.print("Escolha uma opcao: ");
 
-            System.out.println("Caminho encontrado");
-            System.out.println(caminho.stream()
-                    .map(Local::getNome)
-                    .collect(Collectors.joining(" → ")));
-            System.out.println();
-            System.out.println("- Origem: " + origem + ".");
-            System.out.println("- Destino: " + destino + ".");
-            System.out.println("- Total: " + (caminho.size() - 1) + " conexões.");
-        } else {
-            System.out.println("Nenhum caminho encontrado entre " + origem + " e " + destino + ".");
-        }
+            opcao = scanner.nextInt();
+
+            switch (opcao) {
+
+                case 1:
+
+                    System.out.println("\n--- LOCAIS DISPONIVEIS ---");
+
+                    Local[] locais = Local.values();
+
+                    for (int i = 0; i < locais.length; i++) {
+                        System.out.println(i + " - " + locais[i].getNome());
+                    }
+
+                    System.out.print("\nDigite o numero da origem: ");
+                    int indiceOrigem = scanner.nextInt();
+
+                    System.out.print("Digite o numero do destino: ");
+                    int indiceDestino = scanner.nextInt();
+
+                    // Validando os locais escolhidos
+                    if (indiceOrigem < 0 || indiceOrigem >= locais.length
+                            || indiceDestino < 0 || indiceDestino >= locais.length) {
+
+                        System.out.println("\nLocal invalido!");
+                        break;
+                    }
+
+                    Local origem = locais[indiceOrigem];
+                    Local destino = locais[indiceDestino];
+
+                    // Executando a busca em largura
+                    Optional<List<Local>> resultado =
+                            busca.buscarCaminho(origem, destino);
+
+                    if (resultado.isPresent()) {
+
+                        List<Local> caminho = resultado.get();
+
+                        System.out.println("\n====================================");
+                        System.out.println("         CAMINHO ENCONTRADO");
+                        System.out.println("====================================");
+
+                        System.out.println(caminho.stream()
+                                .map(Local::getNome)
+                                .collect(Collectors.joining(" -> ")));
+
+                        System.out.println("\n- Origem: " + origem.getNome());
+                        System.out.println("- Destino: " + destino.getNome());
+                        System.out.println("- Total: " + (caminho.size() - 1)
+                                + " conexoes.");
+
+                    } else {
+
+                        System.out.println("\nNenhum caminho encontrado entre "
+                                + origem.getNome() + " e " + destino.getNome() + ".");
+                    }
+
+                    break;
+
+                case 2:
+
+                    System.out.println("\n--- LOCAIS DA UNIVERSIDADE ---");
+
+                    for (Local local : Local.values()) {
+                        System.out.println("- " + local.getNome());
+                    }
+
+                    break;
+
+                case 0:
+
+                    System.out.println("\nEncerrando sistema...");
+
+                    break;
+
+                default:
+
+                    System.out.println("\nOpcao invalida!");
+
+                    break;
+            }
+
+        } while (opcao != 0);
+
+        scanner.close();
     }
 }
