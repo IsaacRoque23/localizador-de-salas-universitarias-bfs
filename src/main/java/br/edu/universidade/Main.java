@@ -16,10 +16,8 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
 
-        // Carregando o mapa da universidade
         Grafo universidade = MapaUniversidade.criarMapa();
 
-        // Criando o objeto responsável pela busca BFS
         BuscaBFS busca = new BuscaBFS(universidade);
 
         int opcao;
@@ -54,7 +52,7 @@ public class Main {
                     System.out.print("Digite o numero do destino: ");
                     int indiceDestino = scanner.nextInt();
 
-                    // Validando os locais escolhidos
+
                     if (indiceOrigem < 0 || indiceOrigem >= locais.length
                             || indiceDestino < 0 || indiceDestino >= locais.length) {
 
@@ -65,7 +63,7 @@ public class Main {
                     Local origem = locais[indiceOrigem];
                     Local destino = locais[indiceDestino];
 
-                    // Executando a busca em largura
+
                     Optional<List<Local>> resultado =
                             busca.buscarCaminho(origem, destino);
 
